@@ -5,6 +5,13 @@ from four_key_metrics.jenkins import Build
 from four_key_metrics.use_case.get_lead_time_for_project import GetLeadTimeForProject
 
 
+@pytest.fixture
+def default_commit():
+    def _default_commit():
+        return GitCommit("abcdef", 0)
+    return _default_commit
+
+
 def test_can_get_no_lead_time():
     get_lead_time_for_project = GetLeadTimeForProject(
         get_commits_between=lambda organisation, repository, base, head: [],
@@ -74,7 +81,7 @@ def test_can_not_get_lead_time_for_mismatched_environments():
     assert response['lead_time_standard_deviation'] is None
 
 
-def test_can_get_lead_time_for_two_builds_one_commit():
+def test_can_get_lead_time_for_two_builds_one_commit(default_commit):
     build1 = Build(
         started_at=0,
         finished_at=1,
@@ -89,9 +96,7 @@ def test_can_get_lead_time_for_two_builds_one_commit():
         environment='Production',
         git_reference='123457'
     )
-    commit = GitCommit(
-        timestamp=0
-    )
+    commit = default_commit()
     get_lead_time_for_project = GetLeadTimeForProject(
         get_commits_between=lambda organisation, repository, base, head: [commit],
         get_jenkins_builds=lambda job: [build1, build2]
@@ -107,7 +112,7 @@ def test_can_get_lead_time_for_two_builds_one_commit():
     assert response['lead_time_standard_deviation'] == 0
 
 
-def test_can_get_lead_time_for_three_builds_one_commit():
+def test_can_get_lead_time_for_three_builds_one_commit(default_commit):
     build1 = Build(
         started_at=0,
         finished_at=5,
@@ -129,9 +134,7 @@ def test_can_get_lead_time_for_three_builds_one_commit():
         environment='Production',
         git_reference='123457'
     )
-    commit = GitCommit(
-        timestamp=0
-    )
+    commit = default_commit()
     get_lead_time_for_project = GetLeadTimeForProject(
         get_commits_between=lambda organisation, repository, base, head: [commit],
         get_jenkins_builds=lambda job: [build1, build2, build3]
@@ -147,7 +150,7 @@ def test_can_get_lead_time_for_three_builds_one_commit():
     assert response['lead_time_standard_deviation'] == 0.5
 
 
-def test_can_get_lead_time_for_two_builds_two_commits():
+def test_can_get_lead_time_for_two_builds_two_commits(default_commit):
     build1 = Build(
         started_at=0,
         finished_at=1,
@@ -162,12 +165,8 @@ def test_can_get_lead_time_for_two_builds_two_commits():
         environment='Production',
         git_reference='123457'
     )
-    commit1 = GitCommit(
-        timestamp=0
-    )
-    commit2 = GitCommit(
-        timestamp=0
-    )
+    commit1 = default_commit()
+    commit2 = default_commit()
     get_lead_time_for_project = GetLeadTimeForProject(
         get_commits_between=lambda organisation, repository, base, head: [commit1, commit2],
         get_jenkins_builds=lambda job: [build1, build2]
