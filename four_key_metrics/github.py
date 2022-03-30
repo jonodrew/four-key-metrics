@@ -8,6 +8,7 @@ import requests
 class GitCommit:
     sha: str
     timestamp: float = 0.0
+    lead_time: float = 0.0
 
 
 def get_commits_between(organisation, repository, base, head):
