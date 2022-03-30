@@ -1,13 +1,13 @@
 import os
-
+from dataclasses import dataclass
 import ciso8601
 import requests
 
 
+@dataclass(frozen=True)
 class GitCommit:
-    def __init__(self, sha, timestamp):
-        self.sha = sha
-        self.timestamp = timestamp
+    sha: str
+    timestamp: float = 0.0
 
 
 def get_commits_between(organisation, repository, base, head):
