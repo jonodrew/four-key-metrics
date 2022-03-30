@@ -4,7 +4,7 @@ import ciso8601
 import requests
 
 
-@dataclass(frozen=True)
+@dataclass
 class GitCommit:
     sha: str
     timestamp: float = 0.0
