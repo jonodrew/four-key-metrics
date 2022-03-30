@@ -22,7 +22,8 @@ def get_commits_between(organisation, repository, base, head):
     commits = []
 
     for commit in response.json()["commits"]:
-        commit_author_date = commit["commit"]["author"]["date"]
+        commit = commit["commit"]
+        commit_author_date = commit["author"]["date"]
         timestamp = ciso8601.parse_datetime(commit_author_date).timestamp()
         commits.append(GitCommit(sha=commit["sha"], timestamp=timestamp))
     return commits
