@@ -1,11 +1,26 @@
 import json
 import os
+from typing import Callable, Dict, Optional
 
 import httpretty
 import pytest
 
 from four_key_metrics.github import get_commits_between
 from tests.authorization_assertions import assert_authorization_is
+
+
+@pytest.fixture
+def commit_dict() -> Callable[[Optional[str], Optional[str]], Dict]:
+    def _commit_dict(sha="abcdef", timestamp: str = "2021-09-17T13:30:45Z"):
+        return {
+            "commit": {
+                "sha": sha,
+                "author": {
+                    "date": timestamp
+                }
+            }
+        }
+    return _commit_dict
 
 
 @pytest.fixture(autouse=True)
@@ -18,16 +33,10 @@ def around_each():
     httpretty.disable()
 
 
-def test_can_get_comparison_with_one_commit():
+def test_can_get_comparison_with_one_commit(commit_dict):
     github_response = {
         "commits": [
-            {
-                "commit": {
-                    "author": {
-                        "date": "2021-09-17T13:30:45Z"
-                    }
-                }
-            }
+            commit_dict()
         ]
     }
 
@@ -43,23 +52,11 @@ def test_can_get_comparison_with_one_commit():
     assert commits[0].timestamp == 1631885445.0
 
 
-def test_can_get_comparison_with_two_commits():
+def test_can_get_comparison_with_two_commits(commit_dict):
     github_response = {
         "commits": [
-            {
-                "commit": {
-                    "author": {
-                        "date": "2021-09-17T13:30:45Z"
-                    }
-                }
-            },
-            {
-                "commit": {
-                    "author": {
-                        "date": "2021-09-18T13:31:45Z"
-                    }
-                }
-            }
+            commit_dict(),
+            commit_dict("12345", "2021-09-18T13:31:45Z")
         ]
     }
 
