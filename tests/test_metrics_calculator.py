@@ -8,7 +8,7 @@ import functools
 def partial_add_deploy():
     return functools.partial(
         MetricsCalculator().add_deploy,
-        **{"build_commit_hash": "12345", "last_build_commit_hash": "09876"}
+        **{"build_commit_hash": "12345", "previous_build_commit_hash": "09876"}
     )
 
 
